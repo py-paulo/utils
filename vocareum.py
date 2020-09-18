@@ -12,7 +12,7 @@ import sys
 try:
     import requests
 except ModuleNotFoundError:
-    sys.exit('please install the package: requests')
+    sys.exit('please install the package: requests and rich')
 import re
 import os
 import getpass
@@ -44,16 +44,12 @@ então resolvi automatizar criando um script para fazer isso.
 ```
 usage: %s email
 ```
-""" % Path(sys.argv[0]).name
 
-proxies = {
-    "http": "http://127.0.0.1:8080",
-    "https": "https://127.0.0.1:8080",
-}
+""" % Path(sys.argv[0]).name
 
 PATH_AWS_CREDENTIALS = Path.home().joinpath('.aws', 'credentials')
 try:
-    PATH_AWS_CREDENTIALS.mkdir(parents=True, exist_ok=True)
+    PATH_AWS_CREDENTIALS.parent.mkdir(parents=True, exist_ok=True)
 except FileExistsError:
     pass
 
@@ -75,6 +71,7 @@ headers = {
 }
 
 
+# pylint: disable=R0914
 def try_login(mail: str, password: str) -> None:
     """login in to the Vocarium platform, then immediately
     post to get the temporary keys for aws CLI access
@@ -146,7 +143,10 @@ def try_login(mail: str, password: str) -> None:
     for line in aws_write_lines:
         print(line)
 
-    os.remove(PATH_AWS_CREDENTIALS)
+    try:
+        os.remove(PATH_AWS_CREDENTIALS)
+    except FileNotFoundError:
+        pass
 
     with open(PATH_AWS_CREDENTIALS, 'w+') as fip:
         fip.write('[default]\n')
