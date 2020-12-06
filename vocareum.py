@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 GNU General Public License v3.0
 
@@ -158,10 +160,12 @@ if __name__ == '__main__':
     console = Console()
     md = Markdown(MARKDOWN)
 
-    console.print(md)
+    if "--help" in sys.argv:
+        console.print(md)
+        sys.exit(0)
 
     if len(sys.argv) >= 2:
         passwd = getpass.getpass()
         try_login(sys.argv[1], passwd)
     else:
-        pass
+        console.print(md)
